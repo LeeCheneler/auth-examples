@@ -1,0 +1,22 @@
+{
+  "name": "@auth-examples/jwt-server",
+  "version": "1.0.0",
+  "license": "MIT",
+  "scripts": {
+    "build": "ts-engine build --node-app",
+    "lint": "ts-engine lint",
+    "start": "ts-engine start",
+    "test": "ts-engine test",
+    "typecheck": "ts-engine typecheck"
+  },
+  "devDependencies": {
+    "@ts-engine/cli": "^1.4.0",
+    "@types/express": "^4.17.6"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "express-jwt": "^5.3.3",
+    "jwks-rsa": "^1.8.0"
+  }
+}
