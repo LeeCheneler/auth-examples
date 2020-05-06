@@ -1,29 +1,21 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { getConfig } from "@auth-examples/config";
 import { App } from "./components/app";
-import { history } from "./utils/history";
-import authConfig from "./auth-config.json";
-import { Auth0Provider } from "./components/auth-provider";
+import { AuthProvider } from "./components/auth-provider";
 
-const onRedirectCallback = (appState: any) => {
-  history.push(
-    appState && appState.targetUrl
-      ? appState.targetUrl
-      : window.location.pathname
-  );
-};
-
+const config = getConfig();
 const appElement = document.createElement("div");
 document.body.appendChild(appElement);
 
 ReactDOM.render(
-  <Auth0Provider
-    domain={authConfig.domain}
-    client_id={authConfig.clientId}
-    redirect_uri={window.location.origin}
-    onRedirectCallback={onRedirectCallback}
+  <AuthProvider
+    clientId={config.auth.clientId}
+    domain={config.auth.domain}
+    audience={config.auth.audience}
+    scope={config.auth.scope}
   >
     <App />
-  </Auth0Provider>,
+  </AuthProvider>,
   appElement
 );

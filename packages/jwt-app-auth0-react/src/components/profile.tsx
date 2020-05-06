@@ -1,8 +1,8 @@
 import React from "react";
-import { useAuth0 } from "./auth-provider";
+import { useAuth } from "./auth-provider";
 
 export const Profile = () => {
-  const { user } = useAuth0();
+  const { user } = useAuth();
 
   return (
     <>

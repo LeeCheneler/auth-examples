@@ -32,30 +32,3 @@ The applications will have a basic structure consisting of 3 routes:
 | Server      | JWT       | `express-jwt` `jwks-rsa` | server-jwt          |
 | Application | JWT       | `@auth0/auth0-spa-js`    | app-jwt-auth0-react |
 | Application | JWT       | `oidc-client-js`         | app-jwt-oidc-react  |
-
-```js
-import React from "react";
-import { useAuth, AuthProvider } from "auth-provider";
-
-const App = () => {
-  <AuthProvider clientId="" domain="" audience="" scope="">
-    <Items />
-  </AuthProvider>;
-};
-
-const Items = () => {
-  const auth = useAuth();
-
-  const authStuff = async () => {
-    auth.login();
-    auth.logout();
-    auth.isLoading;
-    auth.isAuthenticated;
-    await auth.getAccessToken();
-    await auth.getIdToken();
-    await auth.getUser();
-  };
-
-  return <></>;
-};
-```

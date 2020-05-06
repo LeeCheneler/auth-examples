@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth0 } from "./auth-provider";
+import { useAuth } from "./auth-provider";
 
 interface Item {
   id: number;
@@ -7,7 +7,7 @@ interface Item {
 }
 
 export const Items = () => {
-  const { getAccessToken } = useAuth0();
+  const { getAccessToken } = useAuth();
   const [items, setItems] = React.useState<Item[]>([]);
 
   React.useEffect(() => {

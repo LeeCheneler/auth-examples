@@ -1,133 +1,140 @@
-import React, { useState, useEffect, useContext } from "react";
-import type {
-  Auth0Client,
-  Auth0ClientOptions,
-  IdToken,
-  GetIdTokenClaimsOptions,
-  GetTokenSilentlyOptions,
-  GetTokenWithPopupOptions,
-  LogoutOptions,
-  RedirectLoginOptions,
-} from "@auth0/auth0-spa-js";
+import React from "react";
+import type { Auth0Client } from "@auth0/auth0-spa-js";
 import createAuth0Client from "@auth0/auth0-spa-js";
+import { history } from "../utils/history";
 
-const DEFAULT_REDIRECT_CALLBACK = () =>
-  window.history.replaceState({}, document.title, window.location.pathname);
-
-interface Auth0Context {
+export interface AuthContext {
   isAuthenticated: boolean;
-  user?: any;
   isLoading: boolean;
   isPopupOpen: boolean;
+  loginWithRedirect: () => Promise<void>;
   loginWithPopup: () => Promise<void>;
-  handleRedirectCallback: () => Promise<void>;
-  getIdTokenClaims: (options?: GetIdTokenClaimsOptions) => Promise<IdToken>;
-  loginWithRedirect: (options?: RedirectLoginOptions) => Promise<void>;
+  logout: () => void;
+  user: any | null;
   getAccessToken: () => Promise<string>;
-  logout: (options?: LogoutOptions) => void;
 }
 
-export const Auth0Context = React.createContext<Auth0Context | null>(null);
-export const useAuth0 = () => useContext(Auth0Context) as Auth0Context;
-
-interface AuthProviderProps extends Auth0ClientOptions {
+export interface AuthProviderProps {
   children: React.ReactNode;
-  onRedirectCallback: (appState: any) => void;
+  clientId: string;
+  domain: string;
+  audience: string;
+  scope: string;
 }
 
-export const Auth0Provider: React.SFC<AuthProviderProps> = ({
-  children,
-  onRedirectCallback = DEFAULT_REDIRECT_CALLBACK,
-  ...initOptions
-}) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-  const [user, setUser] = useState();
-  const [auth0Client, setAuth0] = useState<Auth0Client>();
-  const [isLoading, setIsLoading] = useState(true);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+export const AuthContext = React.createContext<AuthContext | null>(null);
 
-  useEffect(() => {
-    const initAuth0 = async () => {
-      const auth0FromHook = await createAuth0Client(initOptions);
-      setAuth0(auth0FromHook);
+export const useAuth = () => React.useContext(AuthContext) as AuthContext;
 
+export const AuthProvider: React.SFC<AuthProviderProps> = (props) => {
+  const [isLoading, setIsLoading] = React.useState(true);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(false);
+  const [isPopupOpen, setIsPopupOpen] = React.useState(true);
+  const [auth0Client, setAuth0Client] = React.useState<Auth0Client | null>(
+    null
+  );
+  const [user, setUser] = React.useState<any>(null);
+
+  React.useEffect(() => {
+    const init = async () => {
+      // Create the client we'll use for the duration of the app
+      const newAuth0Client = await createAuth0Client({
+        client_id: props.clientId,
+        domain: props.domain,
+        redirect_uri: window.location.origin,
+      });
+
+      setAuth0Client(newAuth0Client);
+
+      // Detect if we are handling an authentication callback, handle and redirect if we are
       if (
         window.location.search.includes("code=") &&
         window.location.search.includes("state=")
       ) {
-        const { appState } = await auth0FromHook.handleRedirectCallback();
-        onRedirectCallback(appState);
+        const { appState } = await newAuth0Client.handleRedirectCallback();
+        history.push(
+          appState && appState.targetUrl
+            ? appState.targetUrl
+            : window.location.pathname
+        );
       }
 
-      const isAuthenticated = await auth0FromHook.isAuthenticated();
-
+      // Check if we're authenticated now and set state accordingly
+      const isAuthenticated = await newAuth0Client.isAuthenticated();
       setIsAuthenticated(isAuthenticated);
 
       if (isAuthenticated) {
-        const user = await auth0FromHook.getUser();
-        setUser(user);
+        setUser(await newAuth0Client.getUser());
       }
 
       setIsLoading(false);
     };
-    initAuth0();
-  }, []);
 
-  const loginWithPopup = async () => {
-    setIsPopupOpen(true);
-    try {
-      await auth0Client?.loginWithPopup();
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsPopupOpen(false);
-    }
-    const user = await auth0Client?.getUser();
-    setUser(user);
-    setIsAuthenticated(true);
+    init();
+  }, [props.clientId, props.domain, props.audience, props.scope]);
+
+  const loginWithRedirect = (): Promise<void> => {
+    return auth0Client!.loginWithRedirect({
+      appState: { targetUrl: window.location.pathname },
+    });
   };
 
-  const handleRedirectCallback = async () => {
-    setIsLoading(true);
-    await auth0Client?.handleRedirectCallback();
-    const user = await auth0Client?.getUser();
-    setIsLoading(false);
-    setIsAuthenticated(true);
-    setUser(user);
+  const loginWithPopup = async (): Promise<void> => {
+    setIsPopupOpen(true);
+
+    try {
+      await auth0Client!.loginWithPopup();
+    } catch (e) {
+      console.error(e);
+    }
+
+    setIsPopupOpen(false);
+    setIsAuthenticated(await auth0Client!.isAuthenticated());
+  };
+
+  const logout = () => {
+    auth0Client?.logout();
   };
 
   const getAccessToken = async (): Promise<string> => {
     try {
-      return (await auth0Client!.getTokenSilently({
-        audience: "https://auth-examples-api",
-      })) as string;
+      // Try and obtain token silently
+      const token = await auth0Client!.getTokenSilently({
+        audience: props.audience,
+        sope: props.scope,
+      });
+      return token as string;
     } catch (e) {
-      if (e.error === "consent_required") {
-        return (await auth0Client!.getTokenWithPopup({
-          audience: "https://auth-examples-api",
-        })) as string;
+      // We can handle consent required below so don't throw
+      // on that error
+      if (e.error !== "consent_required") {
+        throw e;
       }
     }
 
-    throw new Error("Unable to obtain access token silently or with popup.");
+    // Sometimes a new consent from the user is required for a scope
+    // so we need to use a popup so the user can give consent
+    const token = await auth0Client!.getTokenWithPopup({
+      audience: props.audience,
+      sope: props.scope,
+    });
+    return token as string;
   };
 
   return (
-    <Auth0Context.Provider
+    <AuthContext.Provider
       value={{
         isAuthenticated,
         isLoading,
         isPopupOpen,
-        user,
+        loginWithRedirect,
         loginWithPopup,
-        handleRedirectCallback,
-        getIdTokenClaims: (options) => auth0Client!.getIdTokenClaims(options),
-        loginWithRedirect: (options) => auth0Client!.loginWithRedirect(options),
+        logout,
+        user,
         getAccessToken,
-        logout: (options) => auth0Client!.logout(options),
       }}
     >
-      {children}
-    </Auth0Context.Provider>
+      {props.children}
+    </AuthContext.Provider>
   );
 };

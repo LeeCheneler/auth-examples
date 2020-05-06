@@ -1,12 +1,13 @@
 import React from "react";
 import { Router, Switch, Route, Link } from "react-router-dom";
-import { useAuth0 } from "./auth-provider";
+// import { useAuth0 } from "./auth-provider";
+import { useAuth } from "./auth-provider";
 import { history } from "../utils/history";
 import { Profile } from "./profile";
 import { Items } from "./items";
 
 const NavBar = () => {
-  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
+  const { isAuthenticated, loginWithRedirect, logout } = useAuth();
 
   return (
     <>
@@ -31,7 +32,7 @@ const NavBar = () => {
 };
 
 export const App = () => {
-  const { isLoading } = useAuth0();
+  const { isLoading } = useAuth();
 
   if (isLoading) {
     return <div>Loading...</div>;
