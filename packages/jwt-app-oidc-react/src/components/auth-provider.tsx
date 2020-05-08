@@ -23,17 +23,21 @@ export const AuthProvider: React.SFC<AuthProviderProps> = (props) => {
 
   React.useEffect(() => {
     const initialise = async () => {
+      // Cleanup any stale state
       await props.authService.clearStaleState();
+
+      // Obtain the user, will be null if not logged in
       const user = await props.authService.getUser();
-      if (user) {
-        setUser(user);
-      }
-      props.authService.addOnUserLoadedCallback((user) => {
-        console.log("addOnUserLoadedCallback", user);
+      setUser(user);
+
+      // Subscribe to new users being loaded, when the user is
+      // silently logged in to get new tokens this will trigger
+      props.authService.subscribeToUserLoaded((user) => {
         setUser(user);
       });
-      props.authService.addOnUserUnloadedCallback(() => {
-        console.log("addOnUserUnloadedCallback");
+
+      // Subscribe to the user being unloaded, indicating they're not logged in
+      props.authService.subscribeToUserUnloaded(() => {
         setUser(null);
       });
 

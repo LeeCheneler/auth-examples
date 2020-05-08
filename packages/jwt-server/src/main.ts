@@ -2,17 +2,20 @@ import express from "express";
 import cors from "cors";
 import jwt from "express-jwt";
 import jwksRsa from "jwks-rsa";
+import { getConfig } from "@auth-examples/config";
+
+const config = getConfig();
 
 const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: "https://enzsft.eu.auth0.com/.well-known/jwks.json",
+    jwksUri: config.auth.jwksUrl,
   }),
-  audience: "https://auth-examples-api",
-  issuer: "https://enzsft.eu.auth0.com/",
-  algorithms: ["RS256"],
+  audience: config.auth.audience,
+  issuer: config.auth.issuer,
+  algorithms: config.auth.algorithms,
 });
 
 const app = express();

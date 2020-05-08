@@ -1,5 +1,5 @@
 import React from "react";
-import { useAuth } from "./auth-provider";
+import { useAuth } from "../auth-provider";
 
 export const Profile = () => {
   const { user } = useAuth();
