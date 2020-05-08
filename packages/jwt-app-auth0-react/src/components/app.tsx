@@ -1,6 +1,5 @@
 import React from "react";
 import { Router, Switch, Route, Link } from "react-router-dom";
-// import { useAuth0 } from "./auth-provider";
 import { useAuth } from "./auth-provider";
 import { history } from "../utils/history";
 import { Profile } from "./profile";

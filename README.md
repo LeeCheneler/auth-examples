@@ -32,3 +32,23 @@ The applications will have a basic structure consisting of 3 routes:
 | Server      | JWT       | `express-jwt` `jwks-rsa` | server-jwt          |
 | Application | JWT       | `@auth0/auth0-spa-js`    | app-jwt-auth0-react |
 | Application | JWT       | `oidc-client-js`         | app-jwt-oidc-react  |
+
+## Elements of authentication
+
+### User login
+
+- call login
+- eventually lands at `/callback` (maybe use `/callback-signin`)
+- obtain token
+- check if there is a return url in local storage and redirect to it if there is
+
+### User is already logged in
+
+- obtain token silently on load
+- if this fails then call login
+
+### Log user out
+
+- call logout
+- clear all state
+- eventually lands at `/callback` (maybe use `/callback-signout`)
