@@ -27,7 +27,7 @@ export interface SigninOptions {
 
 export interface AuthService {
   signin: (options: SigninOptions) => Promise<void>;
-  signinCallback: () => Promise<User>;
+  signinCallback: () => Promise<User | undefined>;
   silentSignin: () => Promise<void>;
   silentSigninCallback: () => Promise<void>;
   signout: () => Promise<void>;
