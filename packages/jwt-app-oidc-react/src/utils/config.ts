@@ -19,6 +19,7 @@ export interface Config {
     jwksUrl: string;
     openIdConfigurationUrl: string;
     scope: string;
+    storeUserInSessionStorage: boolean;
   };
 }
 
@@ -41,5 +42,6 @@ export const config: Config = {
     jwksUrl: process.env.AUTH_JWKS_URL,
     openIdConfigurationUrl: process.env.AUTH_OPENID_CONFIGURATION_URL,
     scope: process.env.AUTH_SCOPE,
+    storeUserInSessionStorage: true,
   },
 };

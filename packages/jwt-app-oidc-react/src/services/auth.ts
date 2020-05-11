@@ -1,5 +1,10 @@
 import type { User } from "oidc-client";
-import { UserManager } from "oidc-client";
+import {
+  UserManager,
+  WebStorageStateStore,
+  InMemoryWebStorage,
+  UserManagerSettings,
+} from "oidc-client";
 
 export interface AuthServiceOptions {
   authority: string;
@@ -19,6 +24,7 @@ export interface AuthServiceOptions {
     revoke: string;
     register: string;
   };
+  storeUserInSessionStorage: boolean;
 }
 
 export interface SigninOptions {
@@ -42,7 +48,7 @@ type UserLoadedCallback = (user: User) => unknown;
 type UserUnloadedCallback = () => unknown;
 
 export const createAuthService = (options: AuthServiceOptions): AuthService => {
-  const userManager = new UserManager({
+  const userManagerSettings: UserManagerSettings = {
     authority: options.authority,
     client_id: options.clientId,
     redirect_uri: `${window.location.origin}/callback-signin`,
@@ -65,7 +71,14 @@ export const createAuthService = (options: AuthServiceOptions): AuthService => {
     extraQueryParams: {
       audience: options.audience,
     },
-  });
+    userStore: options.storeUserInSessionStorage
+      ? undefined
+      : new WebStorageStateStore({
+          store: new InMemoryWebStorage(),
+        }),
+  };
+
+  const userManager = new UserManager(userManagerSettings);
 
   const onUserLoadedSubscriptions: UserLoadedCallback[] = [];
   const onUserUnloadedSubscriptions: UserUnloadedCallback[] = [];
