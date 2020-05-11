@@ -2,20 +2,20 @@ import express from "express";
 import cors from "cors";
 import jwt from "express-jwt";
 import jwksRsa from "jwks-rsa";
-import { getConfig } from "@auth-examples/config";
+import dotenv from "dotenv";
 
-const config = getConfig();
+dotenv.config();
 
 const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
     cache: true,
     rateLimit: true,
     jwksRequestsPerMinute: 5,
-    jwksUri: config.auth.jwksUrl,
+    jwksUri: process.env.AUTH_JWKS_URL,
   }),
-  audience: config.auth.audience,
-  issuer: config.auth.issuer,
-  algorithms: config.auth.algorithms,
+  audience: process.env.AUTH_AUDIENCE,
+  issuer: process.env.AUTH_ISSUER,
+  algorithms: [process.env.AUTH_ALGORITHM],
 });
 
 const app = express();
