@@ -80,10 +80,10 @@ export const createAuthService = (options: AuthServiceOptions): AuthService => {
     // By default UserManager will store the user object in Session Storage. There
     // is a security trade off here, session storage is open to all JavaScript
     // executing on the page and so tokens may not be safe if malicious JavaScript
-    // managed to execute. It is does provide a *much* faster way of obtaining an
+    // managed to execute. It does provide a *much* faster way of obtaining an
     // already signed in user though. Alternatively, if you really don't want tokens
     // inside any form of Web Storage then we can use an in memory store instead. This
-    // is more secure, however has to draw back of the user needing to be sent around
+    // is more secure, however has the draw back of the user needing to be sent around
     // the login loop again to obtain new tokens. This isn't particularly a problem as
     // if they're already logged in they should be sent the full loop automatically and
     // be issued tokens in a second or 2.
