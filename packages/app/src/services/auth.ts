@@ -25,6 +25,9 @@ export interface AuthServiceOptions {
     register: string;
   };
   storeUserInSessionStorage: boolean;
+  redirectUrl: string;
+  silentRedirectUrl: string;
+  logoutRedirectUrl: string;
 }
 
 export interface SigninOptions {
@@ -51,9 +54,9 @@ export const createAuthService = (options: AuthServiceOptions): AuthService => {
   const userManagerSettings: UserManagerSettings = {
     authority: options.authority,
     client_id: options.clientId,
-    redirect_uri: `${window.location.origin}/callback-signin`,
-    silent_redirect_uri: `${window.location.origin}/callback-silent-signin`,
-    post_logout_redirect_uri: `${window.location.origin}/callback-signout`,
+    redirect_uri: options.redirectUrl,
+    silent_redirect_uri: options.silentRedirectUrl,
+    post_logout_redirect_uri: options.logoutRedirectUrl,
     scope: options.scope,
     revokeAccessTokenOnSignout: true,
     response_type: "id_token token",
@@ -68,9 +71,22 @@ export const createAuthService = (options: AuthServiceOptions): AuthService => {
       revocation_endpoint: options.endpoints.revoke,
       registration_endpoint: options.endpoints.register,
     },
+    // Auth0 requires an audience be sent when signing in in order to obtain
+    // a JWT access token for a particular API. If you don't you get an Auth0
+    // access token which is not a JWT and only works against Auth0's own APIs.
     extraQueryParams: {
       audience: options.audience,
     },
+    // By default UserManager will store the user object in Session Storage. There
+    // is a security trade off here, session storage is open to all JavaScript
+    // executing on the page and so tokens may not be safe if malicious JavaScript
+    // managed to execute. It is does provide a *much* faster way of obtaining an
+    // already signed in user though. Alternatively, if you really don't want tokens
+    // inside any form of Web Storage then we can use an in memory store instead. This
+    // is more secure, however has to draw back of the user needing to be sent around
+    // the login loop again to obtain new tokens. This isn't particularly a problem as
+    // if they're already logged in they should be sent the full loop automatically and
+    // be issued tokens in a second or 2.
     userStore: options.storeUserInSessionStorage
       ? undefined
       : new WebStorageStateStore({

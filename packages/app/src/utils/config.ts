@@ -1,4 +1,4 @@
-// @ts-nocheck
+// @ts-nocheck - don't typecheck because process.env.[...] is always possibly undefined
 
 export interface Config {
   auth: {
@@ -20,6 +20,9 @@ export interface Config {
     openIdConfigurationUrl: string;
     scope: string;
     storeUserInSessionStorage: boolean;
+    redirectUrl: string;
+    silentRedirectUrl: string;
+    logoutRedirectUrl: string;
   };
 }
 
@@ -43,5 +46,8 @@ export const config: Config = {
     openIdConfigurationUrl: process.env.AUTH_OPENID_CONFIGURATION_URL,
     scope: process.env.AUTH_SCOPE,
     storeUserInSessionStorage: true,
+    redirectUrl: `${window.location.origin}/callback-signin`,
+    silentRedirectUrl: `${window.location.origin}/callback-silent-signin`,
+    logoutRedirectUrl: `${window.location.origin}/callback-signout`,
   },
 };

@@ -1,5 +1,5 @@
 {
-  "name": "@auth-examples/jwt-server",
+  "name": "@jwt-auth-example/server",
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {

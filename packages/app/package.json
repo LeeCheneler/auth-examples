@@ -1,5 +1,5 @@
 {
-  "name": "@auth-examples/jwt-app-oidc-react",
+  "name": "@jwt-auth-example/app",
   "version": "1.0.0",
   "license": "MIT",
   "scripts": {

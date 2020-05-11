@@ -1,10 +1,50 @@
-# auth-examples
+# JWT Auth Example
 
-Minimal server and web app implementations of auth approaches.
+An example application using JWT authentication to talk to a secure API.
 
-## Servers
+## Getting started
 
-The servers will have a protected endpoint `GET: /api/items` that returns items in the form of:
+Copy sample .env files, then make sure to fill them out with your auth providers details.
+
+```sh
+# Copy the server's .env file from the sample
+cp packages/server/.env.sample packages/server/.env
+
+# Copy the app's .env file from the sample
+cp packages/app/.env.sample packages/app/.env
+```
+
+Install dependencies.
+
+```sh
+yarn
+```
+
+Run the server.
+
+```sh
+cd packages/server
+yarn start
+```
+
+Run the app.
+
+```sh
+cd packages/app
+yarn start
+```
+
+## Web app
+
+The web app is a basic [React](https://reactjs.org/) application that uses the [oidc-client-js](https://github.com/IdentityModel/oidc-client-js/) to authenticate.
+
+The web app consists of an empty home page, a profile page that dislpays infomation from the user's id token and an items page that displays items fetched from the server API using the user's access token.
+
+## Server
+
+The server is a basic [Node.js Express](https://expressjs.com/) that uses a combination of [express-jwt](https://github.com/auth0/express-jwt) and [jwks-rsa](https://github.com/auth0/node-jwks-rsa) to secure it the API via JWT.
+
+The server has a protected endpoint `GET: /api/items` that returns items in the form of:
 
 ```
 [
@@ -13,42 +53,3 @@ The servers will have a protected endpoint `GET: /api/items` that returns items 
   { id: 3, title: "item 3" },
 ]
 ```
-
-## Applications
-
-The applications will have a basic structure consisting of 3 routes:
-
-- `/` - public, shows login/logout button
-  - if logged in then also shows links to profile and items
-- `/profile` - protected, shows all user/token info
-  - if not logged in then redirects to login and comes back
-- `/items` - protected, shows all items loaded from server
-  - if not logged in then redirects to login and comes back
-
-## Implementations
-
-|             | auth type | libs                     | Name                |
-| ----------- | --------- | ------------------------ | ------------------- |
-| Server      | JWT       | `express-jwt` `jwks-rsa` | server-jwt          |
-| Application | JWT       | `@auth0/auth0-spa-js`    | app-jwt-auth0-react |
-| Application | JWT       | `oidc-client-js`         | app-jwt-oidc-react  |
-
-## Elements of authentication
-
-### User login
-
-- call login
-- eventually lands at `/callback` (maybe use `/callback-signin`)
-- obtain token
-- check if there is a return url in local storage and redirect to it if there is
-
-### User is already logged in
-
-- obtain token silently on load
-- if this fails then call login
-
-### Log user out
-
-- call logout
-- clear all state
-- eventually lands at `/callback` (maybe use `/callback-signout`)

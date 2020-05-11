@@ -14,13 +14,14 @@ import { Navbar } from "./navbar";
 export const App = () => {
   const { isLoading } = useAuth();
 
+  // We don't want to render the app until the auth provider is done loading.
   if (isLoading) {
     return <span>Loading...</span>;
   }
 
   return (
     <Router history={history}>
-      <h1>Auth Examples - JWT - OIDC - React</h1>
+      <h1>JWT Auth Example</h1>
       <Navbar />
       <Switch>
         <SecureRoute path="/items">
