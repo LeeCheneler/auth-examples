@@ -1,35 +1,27 @@
 import React from "react";
-import { Route, RouteProps, useLocation } from "react-router-dom";
+import { Redirect, Route, RouteProps } from "react-router-dom";
 import { useAuth } from "./auth-provider";
 
-interface SecureProps {
-  children: React.ReactNode;
-}
-
-const Secure: React.SFC<SecureProps> = (props) => {
-  const { isAuthenticated, signin } = useAuth();
-  const { pathname } = useLocation();
-
-  React.useEffect(() => {
-    if (!isAuthenticated()) {
-      signin({ returnTo: pathname });
-    }
-  }, [isAuthenticated, signin, pathname]);
-
-  if (isAuthenticated()) {
-    return <>{props.children}</>;
-  }
-
-  return <span>401, redirecting to signin...</span>;
-};
-
+// Only supports using children prop of Route for
+// setting then Route's component to render so we
+// omit the component and render props from the type
 export const SecureRoute = (
   props: Omit<RouteProps, "component" | "render">
 ) => {
-  const { children, ...remainingProps } = props;
+  const { isAuthenticated } = useAuth();
+  const { children, ...routeProps } = props;
+
+  // If authenticated then render the children, if not
+  // then redirect to the signin page sending the path
+  // so it returns the page the user originally requested
+  // once they have authenticated
   return (
-    <Route {...remainingProps}>
-      <Secure>{children}</Secure>
+    <Route {...routeProps}>
+      {isAuthenticated() ? (
+        children
+      ) : (
+        <Redirect to={`/signin?returnTo=${routeProps.path}`} />
+      )}
     </Route>
   );
 };

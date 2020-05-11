@@ -3,7 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "./auth-provider";
 
 export const Navbar = () => {
-  const { isAuthenticated, signin, signout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { pathname } = useLocation();
 
   const isLoggedIn = isAuthenticated();
@@ -11,10 +11,9 @@ export const Navbar = () => {
     <>
       <div>
         {!isLoggedIn && (
-          <button onClick={() => signin({ returnTo: pathname })}>Log in</button>
+          <Link to={`/signin?returnTo=${pathname}`}>Sign in</Link>
         )}
-
-        {isLoggedIn && <Link to="/signout">Signout</Link>}
+        {isLoggedIn && <Link to="/signout">Sign out</Link>}
       </div>
       <div>
         <Link to="/">Home</Link>

@@ -7,6 +7,9 @@ export const SigninCallback = () => {
   const history = useHistory();
 
   React.useEffect(() => {
+    // Complete the sign in, the tokens should be provided
+    // in the url at this point to be stored and then redirect
+    // back to either the returnTo path or to the home page
     const handleSignin = async () => {
       const user = await signinCallback();
       history.replace(user?.state?.returnTo ?? "/");

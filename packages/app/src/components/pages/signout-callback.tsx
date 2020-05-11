@@ -9,6 +9,9 @@ export const SignoutCallback = () => {
   React.useEffect(() => {
     const handleSignout = async () => {
       await signoutCallback();
+
+      // Once signout has completed force the user
+      // back to the home page
       history.replace("/");
     };
     handleSignout();

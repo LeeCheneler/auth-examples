@@ -4,6 +4,7 @@ import { useAuth } from "./auth-provider";
 import { history } from "../utils/history";
 import { SigninCallback } from "./pages/signin-callback";
 import { SignoutCallback } from "./pages/signout-callback";
+import { Signin } from "./pages/signin";
 import { Signout } from "./pages/signout";
 import { SilentSigninCallback } from "./pages/silent-signin-callback";
 import { Profile } from "./pages/profile";
@@ -30,6 +31,9 @@ export const App = () => {
         <SecureRoute path="/profile">
           <Profile />
         </SecureRoute>
+        <Route path="/signin">
+          <Signin />
+        </Route>
         <Route path="/callback-signin">
           <SigninCallback />
         </Route>
