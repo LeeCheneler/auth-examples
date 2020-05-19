@@ -1,6 +1,9 @@
 // @ts-nocheck - don't typecheck because process.env.[...] is always possibly undefined
 
 export interface Config {
+  api: {
+    baseUrl: string;
+  };
   auth: {
     algorithms: string[];
     audience: string;
@@ -27,6 +30,9 @@ export interface Config {
 }
 
 export const config: Config = {
+  api: {
+    baseUrl: process.env.API_BASE_URL,
+  },
   auth: {
     algorithms: [process.env.AUTH_ALGORITHM],
     audience: process.env.AUTH_AUDIENCE,

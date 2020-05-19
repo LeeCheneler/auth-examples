@@ -7,6 +7,11 @@ export interface AuthProviderProps {
   authService: AuthService;
 }
 
+export interface AuthProviderState {
+  isLoading: boolean;
+  user: User | null;
+}
+
 interface AuthContext extends AuthService {
   isAuthenticated: () => boolean;
   isLoading: boolean;
@@ -17,42 +22,42 @@ export const AuthContext = React.createContext<AuthContext | null>(null);
 
 export const useAuth = () => React.useContext(AuthContext) as AuthContext;
 
-export const AuthProvider: React.SFC<AuthProviderProps> = (props) => {
-  const [user, setUser] = React.useState<User | null>(null);
-  const [isLoading, setIsLoading] = React.useState(true);
+export const AuthProvider: React.FC<AuthProviderProps> = (props) => {
+  const [state, setState] = React.useState<AuthProviderState>({
+    isLoading: true,
+    user: null,
+  });
 
   React.useEffect(() => {
     const initialise = async () => {
       // Cleanup any stale state
       await props.authService.clearStaleState();
 
-      // Obtain the user, will be null if not logged in
-      const user = await props.authService.getUser();
-      setUser(user);
-
       // Subscribe to new users being loaded, when the user is
       // silently logged in to get new tokens this will trigger
       props.authService.subscribeToUserLoaded((user) => {
-        setUser(user);
+        setState({ isLoading: false, user });
       });
 
       // Subscribe to the user being unloaded, indicating they're not logged in
       props.authService.subscribeToUserUnloaded(() => {
-        setUser(null);
+        setState({ isLoading: false, user: null });
       });
 
-      setIsLoading(false);
+      // Obtain the user, will be null if not logged in
+      const user = await props.authService.getUser();
+      setState({ isLoading: false, user });
     };
     initialise();
-  }, []);
+  }, [props.authService]);
 
   const isAuthenticated = (): boolean => {
-    return !!user && !user.expired;
+    return !!state.user && !state.user.expired;
   };
 
   return (
     <AuthContext.Provider
-      value={{ ...props.authService, isAuthenticated, isLoading, user }}
+      value={{ ...props.authService, ...state, isAuthenticated }}
     >
       {props.children}
     </AuthContext.Provider>

@@ -1,4 +1,5 @@
 import React from "react";
+import { createApiClient } from "../../api/client";
 import { useAuth } from "../auth-provider";
 
 interface Item {
@@ -7,24 +8,26 @@ interface Item {
 }
 
 export const Items = () => {
-  const { user } = useAuth();
+  const auth = useAuth();
   const [items, setItems] = React.useState<Item[]>([]);
 
   React.useEffect(() => {
-    const fetchItems = async () => {
-      try {
-        const fetchedItems = await fetch("http://localhost:3000/api/items", {
-          headers: { Authorization: `Bearer ${user?.access_token}` },
-        }).then((r) => r.json());
+    if (auth.isAuthenticated()) {
+      const fetchItems = async () => {
+        try {
+          const fetchedItems = await createApiClient({
+            accessToken: auth.user?.access_token,
+          }).items.get();
 
-        setItems(fetchedItems);
-      } catch (e) {
-        console.error(e);
-      }
-    };
+          setItems(fetchedItems.data);
+        } catch (e) {
+          console.error(e);
+        }
+      };
 
-    fetchItems();
-  }, [user]);
+      fetchItems();
+    }
+  }, [auth]);
 
   return (
     <>
