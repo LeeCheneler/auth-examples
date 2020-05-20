@@ -20,4 +20,12 @@ describe("Items", () => {
     await screen.findByText("item 2");
     await screen.findByText("item 3");
   });
+
+  it("should display error message if items cannot be loaded", async () => {
+    nock("http://localhost").get("/api/items").reply(500);
+
+    await render(<Items />);
+
+    await screen.findByText("Oops, failed to load items!");
+  });
 });

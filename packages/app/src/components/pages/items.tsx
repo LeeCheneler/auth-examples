@@ -10,6 +10,7 @@ interface Item {
 export const Items = () => {
   const auth = useAuth();
   const [items, setItems] = React.useState<Item[]>([]);
+  const [error, setError] = React.useState<Error | null>(null);
 
   React.useEffect(() => {
     if (auth.isAuthenticated()) {
@@ -21,7 +22,7 @@ export const Items = () => {
 
           setItems(fetchedItems.data);
         } catch (e) {
-          console.error(e);
+          setError(e);
         }
       };
 
@@ -32,11 +33,14 @@ export const Items = () => {
   return (
     <>
       <h2>Items</h2>
-      <ul>
-        {items.map((i) => (
-          <li key={i.id}>{i.title}</li>
-        ))}
-      </ul>
+      {error && <span>Oops, failed to load items!</span>}
+      {items.length > 0 && (
+        <ul>
+          {items.map((i) => (
+            <li key={i.id}>{i.title}</li>
+          ))}
+        </ul>
+      )}
     </>
   );
 };

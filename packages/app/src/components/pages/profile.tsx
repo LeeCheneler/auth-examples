@@ -7,7 +7,12 @@ export const Profile = () => {
   return (
     <>
       <h2>Profile</h2>
-      {user && <pre>{JSON.stringify(user, null, 2)}</pre>}
+      {user && (
+        <>
+          <p>nickname: {user.profile.nickname}</p>
+          <p>email: {user.profile.email}</p>
+        </>
+      )}
     </>
   );
 };
