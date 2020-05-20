@@ -47,8 +47,8 @@ export interface AuthService {
   subscribeToUserUnloaded: (func: UserUnloadedCallback) => void;
 }
 
-type UserLoadedCallback = (user: User) => unknown;
-type UserUnloadedCallback = () => unknown;
+export type UserLoadedCallback = (user: User) => unknown;
+export type UserUnloadedCallback = () => unknown;
 
 export const createAuthService = (options: AuthServiceOptions): AuthService => {
   const userManagerSettings: UserManagerSettings = {

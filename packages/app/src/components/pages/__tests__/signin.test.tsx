@@ -1,10 +1,10 @@
 import React from "react";
 import { createLocation } from "history";
-import { render } from "../../test-utils/render";
+import { render } from "../../../test-utils/render";
 import {
   createMockAuthService,
   createMockHistory,
-} from "../../test-utils/mocks";
+} from "../../../test-utils/mocks";
 import { Signin } from "../signin";
 
 describe("Signin", () => {

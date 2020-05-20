@@ -1,9 +1,9 @@
 import React from "react";
-import { render } from "../../test-utils/render";
+import { render } from "../../../test-utils/render";
 import {
   createMockAuthService,
   createMockHistory,
-} from "../../test-utils/mocks";
+} from "../../../test-utils/mocks";
 import { SignoutCallback } from "../signout-callback";
 
 describe("SignoutCallback", () => {

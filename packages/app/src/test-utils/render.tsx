@@ -1,8 +1,7 @@
 import React from "react";
-import { act } from "react-dom/test-utils";
 import type { History } from "history";
-import { render as RTLRender, RenderResult } from "@testing-library/react";
-import type { AuthService } from "../../services/auth";
+import { render as RTLRender, RenderResult, act } from "@testing-library/react";
+import type { AuthService } from "../services/auth";
 import { TestProvider } from "./test-provider";
 
 export const render = async (

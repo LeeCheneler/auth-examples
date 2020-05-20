@@ -1,7 +1,7 @@
 import type { User } from "oidc-client";
 import type { History } from "history";
 import { createMemoryHistory } from "history";
-import type { AuthService } from "../../services/auth";
+import type { AuthService } from "../services/auth";
 import deepmerge from "deepmerge";
 
 export const createMockUser = (mergeUser: Partial<User> = {}): User => {
@@ -45,14 +45,12 @@ export const createMockAuthService = (
       signoutCallback: jest.fn().mockReturnValue(Promise.resolve()),
       silentSignin: jest.fn().mockReturnValue(Promise.resolve()),
       silentSigninCallback: jest.fn().mockReturnValue(Promise.resolve()),
-      subscribeToUserLoaded: jest.fn().mockReturnValue(Promise.resolve()),
-      subscribeToUserUnloaded: jest.fn().mockReturnValue(Promise.resolve()),
+      subscribeToUserLoaded: jest.fn(),
+      subscribeToUserUnloaded: jest.fn(),
     },
     mergeAuthService
   );
 };
-
-interface RRHistory {}
 
 export const createMockHistory = (
   mergeHistory: Partial<History> = {}

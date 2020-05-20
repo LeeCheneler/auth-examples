@@ -1,10 +1,10 @@
 import React from "react";
-import { render } from "../../test-utils/render";
+import { render } from "../../../test-utils/render";
 import {
   createMockAuthService,
   createMockHistory,
   createMockUser,
-} from "../../test-utils/mocks";
+} from "../../../test-utils/mocks";
 import { SigninCallback } from "../signin-callback";
 
 describe("SigninCallback", () => {

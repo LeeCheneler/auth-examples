@@ -1,7 +1,7 @@
 import React from "react";
 import { screen } from "@testing-library/react";
 import nock from "nock";
-import { render } from "../../test-utils/render";
+import { render } from "../../../test-utils/render";
 import { Items } from "../items";
 
 describe("Items", () => {

@@ -1,8 +1,8 @@
 import React from "react";
 import { Router } from "react-router-dom";
 import type { History } from "history";
-import type { AuthService } from "../../services/auth";
-import { AuthProvider } from "../auth-provider";
+import type { AuthService } from "../services/auth";
+import { AuthProvider } from "../components/auth-provider";
 import { createMockHistory, createMockAuthService } from "../test-utils/mocks";
 
 interface TestProviderProps {

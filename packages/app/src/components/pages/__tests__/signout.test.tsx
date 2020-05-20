@@ -1,6 +1,6 @@
 import React from "react";
-import { render } from "../../test-utils/render";
-import { createMockAuthService } from "../../test-utils/mocks";
+import { render } from "../../../test-utils/render";
+import { createMockAuthService } from "../../../test-utils/mocks";
 import { Signout } from "../signout";
 
 describe("Signout", () => {
