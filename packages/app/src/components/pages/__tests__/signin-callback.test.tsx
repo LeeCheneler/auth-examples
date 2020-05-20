@@ -36,7 +36,7 @@ describe("SigninCallback", () => {
 
     expect(mockAuthService.signinCallback).toHaveBeenCalledTimes(1);
 
-    // if no return url then go to app root
+    // if return url then go to the return url
     expect(mockHistory.replace).toBeCalledTimes(1);
     expect(mockHistory.replace).toHaveBeenCalledWith("/return-url");
   });
